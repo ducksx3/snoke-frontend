@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Snoke</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes, user-scalable=0">
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+</head>
+<body>
+  <div id="Screen">
+
+  <section id="initialScreen-Container" class="vh-100 flex justify-content-center">
+    <div  class="container h-100" >
+      <div id="initialScreen" class="h-100">
+        <div class="d-flex flex-column align-items-center justify-content-center h-100">
+            <h1 class="title-banner">Snoke</h1>
+
+            <div id="newGameBTNGroup">
+              <button id="myBtn" class="btn btn-secondary">⚙️</button>
+              <button type="submit"class="btn btn-success" id="newGameButton">Create New Game</button>
+                <button type="button" class="btn btn-secondary" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
+                  🇿🇦
+                </button>
+                <!-- <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <span class="sr-only">Toggle Dropright</span>
+                </button> -->
+                <div class="dropdown-menu">
+                  <!-- Dropdown menu links -->
+                </div>
+            </div>
+            
+            <button type="submit"class="btn btn-success "id="joinGameButton">Join Game</button>
+              <input type="text" placeholder="Enter Game Code" id="gameCodeInput"/>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+      <div id="gameScreen" class="gameScreenClass">
+        <div id="player-scoreboard-container">
+          <h1 id="player-scoreText"></h1>
+          <h1 id="player-highscoreText"></h1>
+        </div>
+
+          <div id="focus-container">
+            <div id="gameCodeContainer">
+              <h1>Room Code: <span  id="gameCodeDisplay" data-toggle="tooltip" data-placement="top" title="Click to copy link"></span></h1>
+            </div>
+            <div id="canvas-container">
+              <canvas id="canvas"></canvas>
+            </div>
+          </div>
+
+          <div id="scoreboard-container">
+            <h1 id="scoreText">Scoreboard </h1>
+            <h1 id="highscoreText"></h1>
+            </div>
+
+
+              <!-- Relative Positioning -->
+            <div id="snake-colour">
+              <span class="tooltiptext" id="snake-colour_tooltip">Tooltip text</span>
+            </div>
+      </div>
+</div>
+
+
+<!-- The Game Settings Modal -->
+
+<!-- The Modal -->
+<div id="gameOptions_Modal" class="gameOptions_Modal">
+
+  <!-- Modal content -->
+  <div class="gameOptions_Modal-content">
+    <span class="close">&times;</span>
+      <form  action="javascript:void(0);"> 
+        <!-- // ##TODO - make autocomplete="off" optional -->
+
+      <div class="range-wrap" style="width: 45%;">
+        <input type="range" class="range" min="1" max="30" step="1" value="11" title="Game speed - how quickly snokes travel">
+        <output class="bubble"></output>
+      </div>
+
+    <div id="checkboxes-groups">
+
+      <div>
+        <input type="checkbox" id="eatSelfCheckbox" name="eatSelf" checked=true class="gameRulesCheckbox" title="Snokes lose life if they eat themselves">
+        <label for="eatSelfCheckbox" title="Snokes lose life if they eat themselves">Self collision</label>
+      </div>
+
+      <div>
+        <input type="checkbox" id="snokesCollideCheckbox" name="snokesCollide" checked=true  class="gameRulesCheckbox" title="Crashing into other Snokes loses a life">
+        <label for="snokesCollide" title="Crashing into other snokes loses a life">Snokes collide</label>
+      </div>
+
+      <div>
+        <input type="checkbox" id="wallWrap" name="wallWrap" checked=true class="gameRulesCheckbox" title="Hitting the wall teleports Snokes to the other side">
+        <label for="wallWrap" title="Hitting the wall teleports Snokes to the other side">Wrap on wall hit</label>
+      </div>
+      
+      <div>
+        <input type="checkbox" id="wallCollision" name="wallCollision"  class="gameRulesCheckbox" title="Hitting a wall loses a Snoke a life">
+        <label for="wallCollision" title="Hitting a wall loses a snoke a life">Lose life on wall hit</label>
+      </div>      
+      
+      <div>
+        <input type="checkbox" id="allowReversing" name="allowReversing"  class="gameRulesCheckbox" title="Allow Snokes to reverse - Warning: pairing with Self Collision is a fatal combo">
+        <label for="allowReversing" title="Allow Snokes to reverse - Warning: pairing with Self Collision is a fatal combo">Allow reversing</label>
+      </div>
+  
+    </div>
+
+      <div id="newCustomGameBTN-Wrapper">
+        <button id="newCustomGameBTN" class="btn btn-success">New Game</button>
+      </div>
+    </form>
+
+    </div>
+  </div>
+</div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.0/socket.io.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>
+
+
+<!-- ##TODO - refactor style and update names -->
+<style>
+
+  h1 {
+    font-size: 3vw;
+    white-space: nowrap;
+    margin: 0;
+  }
+
+  h2{
+    font-size: 2vw;
+    white-space: nowrap;
+    margin: 0;
+  }
+
+body, html {
+  color: white;
+  margin: 0;
+  overflow: hidden;
+  /* background-color: #0c0b0b; #231f20 */
+  background: linear-gradient(to bottom, #33ccff 0%, #ff99cc 100%)
+/* // straight from https://www.w3schools.com/colors/colors_gradient.asp - i really like this gradient */
+}
+
+#gameScreen {
+  display: none;
+} 
+
+.gameScreenClass {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  min-height: 100vh;
+  /* min-width: 100vw; */
+  justify-items: center;
+}
+
+#newGameBTNGroup {
+  display: flex;
+  margin-bottom: 15px;
+}
+
+#newGameBTNGroup > * {
+  font-size: 20px;
+}
+
+#myBtn {
+  padding: 15px;
+}
+
+ 
+@media screen and (max-width: 600px) {
+    #player-scoreText{
+      font-size: 1rem;
+    }
+
+    #player-scoreboard-container {
+      position: fixed;
+      right: 1%;
+    }
+
+    #scoreboard-container {
+      position: fixed;
+    }
+
+    #scoreboard-container p {
+    font-size: 0.8rem;
+}
+
+  #scoreboard-container h1 {
+    font-size: 1rem;
+  }
+
+  #focus-container {
+    margin-top: 30%;
+  }
+
+  #canvas-container {
+    margin-bottom: 0;
+  }
+
+  #snake-colour {
+    bottom: 0;
+    left: 0%;
+    top: 1%;
+  }
+}
+
+#focus-container {
+  text-align: center;
+}
+
+#canvas-container {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+}
+/* https://stackoverflow.com/a/10797328 */
+
+canvas {
+  /* min-width: 100%;
+  min-height: 80%; */
+  margin-bottom: 15px;
+}
+
+#scoreboard-container {
+  text-align: center;
+  font-size: 2vw;
+  height: 100vh;
+  overflow-x: hidden; /* Hide horizontal scrollbar */
+  overflow-y: auto; /* Add vertical scrollbar */
+}
+
+#scoreboard-container p {
+  margin: 0;
+}
+
+#copyIDButton {
+  background: none;
+  border: none;
+  margin: 0;
+  outline: none;
+  font-size: 1vw;
+}
+
+.title-banner {
+  font-size: 10vw;
+  justify-self: center;
+}
+
+#newGameButton {
+  padding: 15px;
+  font-size: 20px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+#joinGameButton {
+  margin-bottom: 15px;
+  padding: 15px;
+  font-size: 20px;
+}
+
+#gameCodeInput {
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  outline: none;
+}
+
+#gameCodeContainer {
+  background: linear-gradient(to right, #42e077 0%, #ff99cc 100%);
+  border-radius: 20px;
+  text-align: center;
+  cursor: pointer;
+}
+
+#snake-colour {
+    width: 2rem;
+    height: 2rem;
+    display: inline-block;
+    position: absolute;
+    bottom: 1rem;
+    left: 2rem;
+}
+
+
+/* <--- Snoke Colour Swab ---> */
+
+#snake-colour .tooltiptext {
+  visibility: hidden;
+  width: 5rem;
+  background-color: rgba(51, 50, 50, 0.815);
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+  bottom: 100%;
+  margin-left: -60%;
+}
+
+#snake-colour:hover .tooltiptext {
+  visibility: visible;
+}
+
+
+
+
+/* <--- Game Options Modal  ---> */
+
+
+/* GameRules Selection Modal */
+/* The Modal (background) */
+.gameOptions_Modal {
+  justify-content: center;
+  justify-self: center;
+  justify-items: center;
+  align-items: center;
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+}
+
+/* Modal Content */
+.gameOptions_Modal-content {
+  background: linear-gradient(to bottom right,  #ff99cc 0%,  #33ccff 100%);
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 40%;
+  height: auto;
+  border-radius: 10px;
+  overflow: auto;
+}
+
+/* The Close Button */
+.close {
+  background-color: rgb(255, 255, 255);
+  border-radius: 10px;
+  padding-right: 5px;
+  padding-left: 5px;
+  color: #00ffc8;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: rgb(67, 255, 9);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+label {
+  user-select: none;
+}
+
+#checkboxes-groups {
+  display: flex;
+  flex-direction: column;
+}
+
+.range-wrap {
+  position: relative;
+  margin: 15px auto 3rem;
+}
+
+.range {
+  width: 100%;
+}
+
+.bubble {
+  background: linear-gradient(to bottom, #33ccff 0%, #ff99cc 100%);
+  color: white;
+  padding: 4px 12px;
+  position: absolute;
+  border-radius: 4px;
+  bottom: 100%;
+  width: 6.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  user-select: none;
+}
+
+.bubble::after {
+  content: "";
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: linear-gradient(to top, #33ccff 0%, #ff99cc 100%);
+  bottom: 100%;
+  left: 50%;
+}
+
+#newCustomGameBTN-Wrapper {
+display:flex;
+justify-content: center;
+}
+
+</style>
